@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Base64 encode/decode selected text",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A base64 encoder/decoder extensions for the chrome",
   "permissions": [
     "contextMenus",
