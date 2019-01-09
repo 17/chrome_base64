@@ -1,0 +1,18 @@
+{
+  "name": "chrome_base64",
+  "version": "0.2.0",
+  "description": "A base64 encoder/decoder extensions for the chrome",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jase",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
+}

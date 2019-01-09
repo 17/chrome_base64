@@ -11,4 +11,4 @@ chrome.contextMenus.create({
       action: 'click'
     })
   }
-});
+})

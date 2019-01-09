@@ -1,10 +1,10 @@
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   switch (request.action) {
     case 'click':
-      decode_or_encode_selection()
-      break;
+      decodeEncodeSelection()
+      break
     default:
-      break;
+      break
   }
 })
 
@@ -13,16 +13,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 // })
 
 // https://stackoverflow.com/a/14880260
-String.prototype.replaceBetween = function(start, end, what) {
-    return this.substring(0, start) + what + this.substring(end);
+// String.prototype.replaceBetween = function (start, end, what) {
+//   return this.substring(0, start) + what + this.substring(end)
+// }
+
+function replaceBetween (str, start, end, what) {
+  return str.substring(0, start) + what + str.substring(end)
 }
 
-function decode_or_encode_selection() {
+function decodeEncodeSelection () {
   const sel = window.getSelection()
   // console.log(sel)
 
   // 是否在同一个节点 (是否可以被替换)
-  if (sel.anchorNode == sel.focusNode) {
+  if (sel.anchorNode === sel.focusNode) {
     // 表单元素
     // 表单元素最大特点 isCollapsed === ture
     if (sel.isCollapsed) {
@@ -36,47 +40,48 @@ function decode_or_encode_selection() {
       if (~['TEXTAREA', 'INPUT'].indexOf(el.nodeName)) {
         const start = el.selectionStart
         const end = el.selectionEnd
-        const sel_str = el.value.substring(start, end)
-        const r_str = Base64.decode_or_encode(sel_str)
-        el.value = el.value.replaceBetween(start, end, r_str)
+        const selStr = el.value.substring(start, end)
+        const rStr = Base64.decode_or_encode(selStr)
+        el.value = replaceBetween(el.value, start, end, rStr)
         return
       }
-    } 
+    }
 
     // 文本元素
-    if (sel.anchorNode.nodeName == '#text') {
+    if (sel.anchorNode.nodeName === '#text') {
       let start = sel.anchorOffset
       let end = sel.extentOffset
       if (end < start) {
         start = sel.extentOffset
         end = sel.anchorOffset
       }
-      const sel_str = sel.anchorNode.textContent.substring(start, end)
-      const r_str = Base64.decode_or_encode(sel_str)
-      sel.anchorNode.textContent = sel.anchorNode.textContent.replaceBetween(start, end, r_str)
+      const selStr = sel.anchorNode.textContent.substring(start, end)
+      const rStr = Base64.decode_or_encode(selStr)
+      sel.anchorNode.textContent = replaceBetween(sel.anchorNode.textContent, start, end, rStr)
       return
     }
   }
 
   // 默认
-  const sel_str = sel.toString()
-  const r_str = Base64.decode_or_encode(sel_str)
+  const selStr = sel.toString()
+  const rStr = Base64.decode_or_encode(selStr)
   // const tips = (Base64.is_base64(sel_str)? '解密': '加密') + '完成'
-  prompt('', r_str)
+  prompt('', rStr)
 }
 
 const Base64 = {
-  decode(str) {
+  decode (str) {
     return decodeURIComponent(escape(window.atob(str)))
   },
-  encode(str) {
+  encode (str) {
     return window.btoa(unescape(encodeURIComponent(str)))
   },
-  is_base64(str) {
+  is_base64 (str) {
     // https://github.com/miguelmota/is-base64/blob/master/is-base64.js#L15
     // var regex = '(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\/]{3}=)?';
     // return (new RegExp('^' + regex + '$', 'gi')).test(str)
-    const regex = /^(?:[A-Za-z0-9+\\/]{4})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/gi
+    // const regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/gi
+    const regex = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$/
     if (!regex.test(str)) {
       return false
     }
@@ -88,7 +93,7 @@ const Base64 = {
     }
     return true
   },
-  decode_or_encode(str) {
-    return this.is_base64(str)? this.decode(str): this.encode(str)
+  decode_or_encode (str) {
+    return this.is_base64(str) ? this.decode(str) : this.encode(str)
   }
 }
